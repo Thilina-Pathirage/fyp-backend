@@ -1,20 +1,17 @@
 const mongoose = require('mongoose');
 
-const complaintSchema = new mongoose.Schema({
-  title: {
+const leavesSchema = new mongoose.Schema({
+  startDate: Date,
+  endDate: Date,
+  requestedDate: Date,
+  requestedUserEmail: String,
+  status: {
     type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  createdByUserEmail: {
-    type: String,
-    required: true,
+    enum: ['Approved', 'Rejected', 'Pending'],
+    default: 'Pending',
   },
 });
 
-const Complaint = mongoose.model('Complaint', complaintSchema);
+const Leaves = mongoose.model('Leaves', leavesSchema);
 
-module.exports = Complaint;
+module.exports = Leaves;

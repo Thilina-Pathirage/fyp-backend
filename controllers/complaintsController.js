@@ -26,14 +26,17 @@ async function deleteComplaint(req, res) {
     try {
         const { id } = req.params;
 
-        await Complaints.findByIdAndRemove(id);
+        const deletedComplaint = await Complaints.findByIdAndRemove(id);
+
+        if (!deletedComplaint) {
+            return res.status(404).json({ message: 'Complaint not found' });
+        }
 
         res.status(200).json({ message: 'Complaint deleted successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Failed to delete complaint', error: error.message });
     }
 }
-
 // Update a complaint's title and description by its ID
 async function updateComplaint(req, res) {
     try {

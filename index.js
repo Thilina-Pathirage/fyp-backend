@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const userRoutes = require('./routes/userRoutes');
 const complaintRoutes = require('./routes/complaintsRoutes');
+const leavesRoutes = require('./routes/leavesRoutes');
 
 const app = express();
 const port = process.env.PORT;
@@ -25,6 +26,7 @@ app.use(bodyParser.json());
 // Routes
 app.use('/api/users', userRoutes);
 app.use('/api/complaints', complaintRoutes);
+app.use('/api/leaves', leavesRoutes);
 
 // Start the server
 app.listen(port, () => {
