@@ -5,6 +5,7 @@ const leavesSchema = new mongoose.Schema({
   endDate: Date,
   requestedDate: Date,
   requestedUserEmail: String,
+  reason: String,
   status: {
     type: String,
     enum: ['Approved', 'Rejected', 'Pending'],

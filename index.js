@@ -4,13 +4,17 @@ const bodyParser = require('body-parser');
 const userRoutes = require('./routes/userRoutes');
 const complaintRoutes = require('./routes/complaintsRoutes');
 const leavesRoutes = require('./routes/leavesRoutes');
+const cors = require("cors");
 
 const app = express();
 const port = process.env.PORT;
 
+//access to cors
+app.use(cors());
+
 // Connect to MongoDB (replace 'your-database-uri' with your MongoDB URI)
 mongoose.connect('mongodb+srv://' + process.env.URI, {
-    useNewUrlParser: true,
+  useNewUrlParser: true,
   useUnifiedTopology: true,
 })
   .then(() => {

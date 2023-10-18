@@ -3,13 +3,14 @@ const Leaves = require('../models/leavesModel');
 // Create a new leave request
 async function createLeave(req, res) {
     try {
-        const { startDate, endDate, requestedDate, requestedUserEmail } = req.body;
+        const { startDate, endDate, requestedDate, requestedUserEmail, reason } = req.body;
 
         const newLeave = new Leaves({
             startDate,
             endDate,
             requestedDate,
             requestedUserEmail,
+            reason
         });
 
         await newLeave.save();
@@ -94,7 +95,32 @@ async function getLeavesByStatus(req, res) {
     }
 }
 
+// Update leave request start date, end date, and reason by its ID
+async function updateLeave(req, res) {
+    try {
+        const { id } = req.params;
+        const { startDate, endDate, reason } = req.body;
+
+        const updatedLeave = await Leaves.findByIdAndUpdate(
+            id,
+            { startDate, endDate, reason },
+            { new: true }
+        );
+
+        if (!updatedLeave) {
+            return res.status(404).json({ message: 'Leave request not found' });
+        }
+
+        res.status(200).json({ message: 'Leave request updated successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to update leave request', error: error.message });
+    }
+}
+
+// Rest of the existing methods...
 
 
 
-module.exports = { createLeave, getAllLeaves, getLeavesByUser, updateLeaveStatus, deleteLeave, getLeavesByStatus };
+
+
+module.exports = { createLeave, getAllLeaves, getLeavesByUser, updateLeaveStatus, deleteLeave, getLeavesByStatus, updateLeave };

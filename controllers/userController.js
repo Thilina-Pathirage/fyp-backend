@@ -95,4 +95,65 @@ async function loginUser(req, res) {
   }
 }
 
-module.exports = { registerUser, loginUser };
+const WorkRecord = require('../models/workRecordModel'); // Import the WorkRecord model
+
+// Start work time tracking
+async function startWorkTime(req, res) {
+  try {
+    const { userId } = req.body;
+    const currentTime = new Date();
+    const currentDate = new Date().toLocaleDateString();
+
+    // Check if there is an existing work record for the current date
+    const existingRecord = await WorkRecord.findOne({ userId, date: currentDate });
+
+    if (existingRecord) {
+      return res.status(200).json({ message: 'Work time tracking already started for today.' });
+    }
+
+    // Store the start time in a new user's work record
+    const workRecord = new WorkRecord({
+      userId,
+      date: currentDate,
+      startTime: currentTime,
+      endTime: null, // Initially, the end time is null
+    });
+
+    await workRecord.save();
+    res.status(200).json({ message: 'Work time tracking started for today.' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to start work time tracking', error: error.message });
+  }
+}
+
+module.exports = { startWorkTime };
+
+
+// Stop work time tracking and update work record
+async function stopWorkTime(req, res) {
+  try {
+    const { userId } = req.body;
+    const stopTime = new Date();
+
+    // Find the work record for the current date
+    const currentDate = new Date().toLocaleDateString();
+    const workRecord = await WorkRecord.findOne({ userId, date: currentDate, endTime: null });
+
+    if (workRecord) {
+      // Update the end time and calculate work duration
+      workRecord.endTime = stopTime;
+      const workDuration = workRecord.endTime - workRecord.startTime;
+
+      // Update the work record
+      await workRecord.save();
+
+      res.status(200).json({ message: 'Work time tracking stopped.', workDuration });
+    } else {
+      res.status(404).json({ message: 'Work time tracking not started for today.' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to stop work time tracking', error: error.message });
+  }
+}
+
+module.exports = { registerUser, loginUser, startWorkTime, stopWorkTime };

@@ -1,19 +1,42 @@
 const mongoose = require('mongoose');
 
 const userSchema = new mongoose.Schema({
-  firstName: String,
-  lastName: String,
-  email: {
+  firstName: {
     type: String,
-    unique: true,
     required: true,
   },
-  password: String, // Store hashed password
-  userRole: String,
-  position: String,
-  mentalHealthStatus: String,
-  workStatus: String,
-  // Add any other fields or validations as needed
+  lastName: {
+    type: String,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  userRole: {
+    type: String,
+    required: true,
+  },
+  position: {
+    type: String,
+  },
+  mentalHealthStatus: {
+    type: String,
+  },
+  workStatus: {
+    type: String,
+  },
+  workRecords: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'WorkRecord', // Reference to the WorkRecord model
+    },
+  ],
 });
 
 const User = mongoose.model('User', userSchema);

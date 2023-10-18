@@ -2,7 +2,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { createLeave, getAllLeaves, getLeavesByUser, updateLeaveStatus, deleteLeave, getLeavesByStatus } = require('../controllers/leavesController');
+const { createLeave, getAllLeaves, getLeavesByUser, updateLeaveStatus, deleteLeave, getLeavesByStatus, updateLeave } = require('../controllers/leavesController');
 
 // Create a new leave request
 router.post('/create', createLeave);
@@ -14,7 +14,10 @@ router.get('/all', getAllLeaves);
 router.get('/by-user/:userEmail', getLeavesByUser);
 
 // Update leave request status
-router.put('/update/:id', updateLeaveStatus);
+router.put('/update-status/:id', updateLeaveStatus);
+
+
+router.put('/update/:id', updateLeave);
 
 // Delete a leave request by its ID
 router.delete('/delete/:id', deleteLeave);
