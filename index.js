@@ -33,6 +33,6 @@ app.use('/api/complaints', complaintRoutes);
 app.use('/api/leaves', leavesRoutes);
 
 // Start the server
-app.listen(port, () => {
+app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${port}`);
 });
