@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --timeout 10000",
     "start": "node index.js",
     "dev": "nodemon ./index.js"
   },
@@ -18,8 +17,6 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.5.4",
     "nodemon": "^3.0.1"
-  },
-  "devDependencies": {
-    "mocha": "^10.2.0"
   }
+
 }
