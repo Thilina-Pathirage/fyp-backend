@@ -13,7 +13,7 @@ const port = process.env.PORT;
 app.use(cors());
 
 // Connect to MongoDB (replace 'your-database-uri' with your MongoDB URI)
-mongoose.connect('mongodb+srv://' + process.env.URI, {
+mongoose.connect('mongodb+srv://thilinapathirage:w5u2ieXzh49R0AwB@cluster0.oe1cihe.mongodb.net/fypDB?retryWrites=true&w=majority', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
