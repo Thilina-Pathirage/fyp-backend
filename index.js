@@ -7,18 +7,13 @@ const leavesRoutes = require('./routes/leavesRoutes');
 const cors = require("cors");
 
 const app = express();
-const port = process.env.PORT;
+
 
 const dotenv = require('dotenv');
 
-
-
-
-
-
 dotenv.config();
 
-
+const port = process.env.PORT;
 
 //access to cors
 app.use(cors());
