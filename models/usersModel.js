@@ -26,7 +26,7 @@ const userSchema = new mongoose.Schema({
     type: String,
   },
   mentalHealthStatus: {
-    type: String,
+    type: Object, // Change the type to Object
   },
   workStatus: {
     type: String,
@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema({
   workRecords: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'WorkRecord', // Reference to the WorkRecord model
+      ref: 'WorkRecord',
     },
   ],
 });

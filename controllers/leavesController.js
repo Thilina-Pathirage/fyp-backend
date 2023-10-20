@@ -95,7 +95,6 @@ async function getLeavesByStatus(req, res) {
     }
 }
 
-// Update leave request start date, end date, and reason by its ID
 async function updateLeave(req, res) {
     try {
         const { id } = req.params;
@@ -116,11 +115,6 @@ async function updateLeave(req, res) {
         res.status(500).json({ message: 'Failed to update leave request', error: error.message });
     }
 }
-
-// Rest of the existing methods...
-
-
-
 
 
 module.exports = { createLeave, getAllLeaves, getLeavesByUser, updateLeaveStatus, deleteLeave, getLeavesByStatus, updateLeave };

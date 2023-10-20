@@ -3,6 +3,8 @@
 const User = require('../models/usersModel');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
+
 
 // User Registration
 async function registerUser(req, res) {
@@ -155,4 +157,59 @@ async function stopWorkTime(req, res) {
   }
 }
 
-module.exports = { registerUser, loginUser, startWorkTime, stopWorkTime };
+// Get all users
+async function getAllUsers(req, res) {
+  try {
+    const users = await User.find({}, '-password'); // Exclude the password field
+    res.status(200).json(users);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch user data', error: error.message });
+  }
+}
+
+// Get user data by email
+async function getUserDataByEmail(req, res) {
+  try {
+    const { email } = req.params;
+    const user = await User.findOne({ email }, '-password'); // Exclude the password field
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch user data by email', error: error.message });
+  }
+}
+
+async function updateUserMLData(req, res) {
+  try {
+    // Make a POST request to the ML model's endpoint
+    const mlResponse = await axios.post('https://fyp-eud-ml.azurewebsites.net/predict', req.body);
+
+    // Get the ML results from the response
+    const mlData = mlResponse.data;
+
+    // Get the user's email from the request
+    const userEmail = req.body.email;
+
+    // Find the user by email
+    const user = await User.findOne({ email: userEmail });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update the user's data with ML results
+    user.mentalHealthStatus = mlData;
+
+    // Save the updated user data
+    await user.save();
+
+    res.status(200).json({ message: 'User data updated with ML results' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update user data with ML results', error: error.message });
+  }
+}
+
+
+module.exports = { registerUser, loginUser, startWorkTime, stopWorkTime, updateUserMLData, getAllUsers, getUserDataByEmail };
