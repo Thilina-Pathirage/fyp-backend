@@ -26,7 +26,11 @@ const userSchema = new mongoose.Schema({
     type: String,
   },
   mentalHealthStatus: {
-    type: Object, // Change the type to Object
+    type: Object,
+    default: {  // Set the default value here
+      prediction: "Normal",
+      recommendations: [],
+    },
   },
   workStatus: {
     type: String,
