@@ -275,6 +275,33 @@ async function getCountByMentalHealthStatus(req, res) {
   }
 }
 
+// Update a user's work status
+async function updateWorkStatus(req, res) {
+  try {
+    const { email, newWorkStatus } = req.body;
+
+    // Find the user by their email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Update the user's work status
+    user.workStatus = newWorkStatus;
+
+    // Save the updated user data
+    await user.save();
+
+    res.status(200).json({ message: 'Work status updated successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to update work status', error: error.message });
+  }
+}
+
+module.exports = { updateWorkStatus };
+
+
 
 // Get count of users by their workload
 async function getCountByWorkload(req, res) {
@@ -296,4 +323,4 @@ async function getCountByWorkload(req, res) {
   }
 }
 
-module.exports = { registerUser, loginUser, startWorkTime, stopWorkTime, updateUserMLData, getAllUsers, getUserDataByEmail, getCountByMentalHealthStatus, getCountByWorkload };
+module.exports = { registerUser, loginUser, startWorkTime, stopWorkTime, updateUserMLData, getAllUsers, getUserDataByEmail, getCountByMentalHealthStatus, getCountByWorkload, updateWorkStatus };

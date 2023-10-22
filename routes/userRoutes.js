@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { registerUser, loginUser, startWorkTime, stopWorkTime, updateUserMLData, getAllUsers, getUserDataByEmail, getCountByMentalHealthStatus, getCountByWorkload } = require('../controllers/userController');
+const { registerUser, loginUser, startWorkTime, stopWorkTime, updateUserMLData, getAllUsers, getUserDataByEmail, getCountByMentalHealthStatus, getCountByWorkload, updateWorkStatus } = require('../controllers/userController');
 
 
 
@@ -29,6 +29,8 @@ router.get('/by-email/:email', getUserDataByEmail);
 router.get('/user-count-by-mental-health', getCountByMentalHealthStatus);
 
 router.get('/user-count-by-workload', getCountByWorkload);
+
+router.put('/update-work-status', updateWorkStatus);
 
 
 module.exports = router;
