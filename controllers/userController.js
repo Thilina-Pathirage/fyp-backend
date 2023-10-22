@@ -9,7 +9,7 @@ const axios = require('axios');
 // User Registration
 async function registerUser(req, res) {
   try {
-    const { firstName, lastName, email, password, userRole, position, mentalHealthStatus, workStatus } = req.body;
+    const { firstName, lastName, email, password, userRole, position, mentalHealthStatus, workStatus, workLoad } = req.body;
 
     // Check if the email is already registered
     const existingUser = await User.findOne({ email });
@@ -30,6 +30,7 @@ async function registerUser(req, res) {
       position,
       mentalHealthStatus,
       workStatus,
+      workLoad
     });
 
     // Save the user to the database
@@ -181,6 +182,36 @@ async function getUserDataByEmail(req, res) {
   }
 }
 
+// async function updateUserMLData(req, res) {
+//   try {
+//     // Make a POST request to the ML model's endpoint
+//     const mlResponse = await axios.post('https://fyp-eud-ml.azurewebsites.net/predict', req.body);
+
+//     // Get the ML results from the response
+//     const mlData = mlResponse.data;
+
+//     // Get the user's email from the request
+//     const userEmail = req.body.email;
+
+//     // Find the user by email
+//     const user = await User.findOne({ email: userEmail });
+
+//     if (!user) {
+//       return res.status(404).json({ message: 'User not found' });
+//     }
+
+//     // Update the user's data with ML results
+//     user.mentalHealthStatus = mlData;
+
+//     // Save the updated user data
+//     await user.save();
+
+//     res.status(200).json({ message: 'User data updated with ML results' });
+//   } catch (error) {
+//     res.status(500).json({ message: 'Failed to update user data with ML results', error: error.message });
+//   }
+// }
+
 async function updateUserMLData(req, res) {
   try {
     // Make a POST request to the ML model's endpoint
@@ -189,18 +220,31 @@ async function updateUserMLData(req, res) {
     // Get the ML results from the response
     const mlData = mlResponse.data;
 
-    // Get the user's email from the request
-    const userEmail = req.body.email;
+    // Get the user's email and workload from the request
+    const { email, Workload } = req.body;
 
     // Find the user by email
-    const user = await User.findOne({ email: userEmail });
+    const user = await User.findOne({ email });
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Update the user's data with ML results
+    // Update the user's data with ML results for mentalHealthStatus
     user.mentalHealthStatus = mlData;
+
+    // Map the Workload answer to workLoad values
+    if (Workload === 'Very Manageable') {
+      user.workLoad = 'Light';
+    } else if (Workload === 'Manageable') {
+      user.workLoad = 'Moderate';
+    } else if (Workload === 'Neutral') {
+      user.workLoad = 'Normal';
+    } else if (Workload === 'Overwhelming') {
+      user.workLoad = 'Heavy';
+    } else if (Workload === 'Extremely Overwhelming') {
+      user.workLoad = 'Overload';
+    }
 
     // Save the updated user data
     await user.save();
@@ -211,5 +255,45 @@ async function updateUserMLData(req, res) {
   }
 }
 
+// Get count of users by their mentalHealthStatus
+async function getCountByMentalHealthStatus(req, res) {
+  try {
+    const pipeline = [
+      {
+        $group: {
+          _id: '$mentalHealthStatus.prediction', // Group by the mentalHealthStatus field
+          count: { $sum: 1 }, // Count the number of users in each group
+        },
+      },
+    ];
 
-module.exports = { registerUser, loginUser, startWorkTime, stopWorkTime, updateUserMLData, getAllUsers, getUserDataByEmail };
+    const result = await User.aggregate(pipeline);
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to get user count by mental health status', error: error.message });
+  }
+}
+
+
+// Get count of users by their workload
+async function getCountByWorkload(req, res) {
+  try {
+    const pipeline = [
+      {
+        $group: {
+          _id: '$workLoad', // Group by the workLoad field
+          count: { $sum: 1 }, // Count the number of users in each group
+        },
+      },
+    ];
+
+    const result = await User.aggregate(pipeline);
+
+    res.status(200).json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to get user count by workload', error: error.message });
+  }
+}
+
+module.exports = { registerUser, loginUser, startWorkTime, stopWorkTime, updateUserMLData, getAllUsers, getUserDataByEmail, getCountByMentalHealthStatus, getCountByWorkload };

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { registerUser, loginUser, startWorkTime, stopWorkTime, updateUserMLData, getAllUsers, getUserDataByEmail } = require('../controllers/userController');
+const { registerUser, loginUser, startWorkTime, stopWorkTime, updateUserMLData, getAllUsers, getUserDataByEmail, getCountByMentalHealthStatus, getCountByWorkload } = require('../controllers/userController');
 
 
 
@@ -25,6 +25,10 @@ router.get('/all-users', getAllUsers);
 
 // Add a new route to get user data by email
 router.get('/by-email/:email', getUserDataByEmail);
+
+router.get('/user-count-by-mental-health', getCountByMentalHealthStatus);
+
+router.get('/user-count-by-workload', getCountByWorkload);
 
 
 module.exports = router;

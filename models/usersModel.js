@@ -35,6 +35,10 @@ const userSchema = new mongoose.Schema({
   workStatus: {
     type: String,
   },
+  workLoad: {
+    type: String,
+    default: "Light",
+  },
   workRecords: [
     {
       type: mongoose.Schema.Types.ObjectId,
