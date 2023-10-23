@@ -39,6 +39,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: "Light",
   },
+  deleted: {
+    type: Boolean,
+    default: false,
+  },
   workRecords: [
     {
       type: mongoose.Schema.Types.ObjectId,

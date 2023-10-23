@@ -58,6 +58,31 @@ async function registerUser(req, res) {
   }
 }
 
+// Soft delete a user by email
+async function softDeleteUserByEmail(req, res) {
+  try {
+    const { email } = req.params;
+
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Mark the user as deleted (soft delete)
+    user.deleted = true;
+
+    // Save the updated user data
+    await user.save();
+
+    res.status(200).json({ message: 'User soft-deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to soft-delete user', error: error.message });
+  }
+}
+
+
 // User Login
 async function loginUser(req, res) {
   try {
@@ -158,21 +183,21 @@ async function stopWorkTime(req, res) {
   }
 }
 
-// Get all users
+// Get all non-deleted users
 async function getAllUsers(req, res) {
   try {
-    const users = await User.find({}, '-password'); // Exclude the password field
+    const users = await User.find({ deleted: false }, '-password');
     res.status(200).json(users);
   } catch (error) {
     res.status(500).json({ message: 'Failed to fetch user data', error: error.message });
   }
 }
 
-// Get user data by email
+// Get non-deleted user data by email
 async function getUserDataByEmail(req, res) {
   try {
     const { email } = req.params;
-    const user = await User.findOne({ email }, '-password'); // Exclude the password field
+    const user = await User.findOne({ email, deleted: false }, '-password');
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
@@ -181,6 +206,7 @@ async function getUserDataByEmail(req, res) {
     res.status(500).json({ message: 'Failed to fetch user data by email', error: error.message });
   }
 }
+
 
 // async function updateUserMLData(req, res) {
 //   try {
@@ -323,4 +349,4 @@ async function getCountByWorkload(req, res) {
   }
 }
 
-module.exports = { registerUser, loginUser, startWorkTime, stopWorkTime, updateUserMLData, getAllUsers, getUserDataByEmail, getCountByMentalHealthStatus, getCountByWorkload, updateWorkStatus };
+module.exports = { registerUser, loginUser, startWorkTime, stopWorkTime, updateUserMLData, getAllUsers, getUserDataByEmail, getCountByMentalHealthStatus, getCountByWorkload, updateWorkStatus, softDeleteUserByEmail };

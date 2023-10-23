@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 
-const { registerUser, loginUser, startWorkTime, stopWorkTime, updateUserMLData, getAllUsers, getUserDataByEmail, getCountByMentalHealthStatus, getCountByWorkload, updateWorkStatus } = require('../controllers/userController');
+const { registerUser, loginUser, startWorkTime, stopWorkTime, updateUserMLData, getAllUsers, getUserDataByEmail, getCountByMentalHealthStatus, getCountByWorkload, updateWorkStatus, softDeleteUserByEmail } = require('../controllers/userController');
 
 
 
@@ -26,11 +26,18 @@ router.get('/all-users', getAllUsers);
 // Add a new route to get user data by email
 router.get('/by-email/:email', getUserDataByEmail);
 
+// Add a new route to get user count by mental health status
 router.get('/user-count-by-mental-health', getCountByMentalHealthStatus);
 
+// Add a new route to get user count by workload
 router.get('/user-count-by-workload', getCountByWorkload);
 
+// Update work status
 router.put('/update-work-status', updateWorkStatus);
+
+// Soft delete user by email
+router.delete('/soft-delete/:email', softDeleteUserByEmail);
+
 
 
 module.exports = router;
