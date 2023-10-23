@@ -19,7 +19,7 @@ const port = process.env.PORT;
 app.use(cors());
 
 // Connect to MongoDB (replace 'your-database-uri' with your MongoDB URI)
-mongoose.connect(process.env.URI, {
+mongoose.connect(process.env.URITEST, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 })
@@ -37,6 +37,9 @@ app.use(bodyParser.json());
 app.use('/api/users', userRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/leaves', leavesRoutes);
+
+
+module.exports = app;
 
 // Start the server
 app.listen(port, () => {

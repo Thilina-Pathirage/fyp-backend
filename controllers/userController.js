@@ -51,7 +51,6 @@ async function registerUser(req, res) {
 
     // Return the token along with user details
     res.status(201).json({ token });
-    // res.status(201).json({ token, firstName: newUser.firstName, lastName: newUser.lastName, email: newUser.email, userRole: newUser.userRole });
 
   } catch (error) {
     res.status(500).json({ message: 'Registration failed', error: error.message });
@@ -115,7 +114,6 @@ async function loginUser(req, res) {
 
     // Return the token along with user details
     res.status(200).json({ token });
-    // res.status(200).json({ token, firstName: user.firstName, lastName: user.lastName, email: user.email, userRole: user.userRole });
 
   } catch (error) {
     res.status(500).json({ message: 'Login failed', error: error.message });
