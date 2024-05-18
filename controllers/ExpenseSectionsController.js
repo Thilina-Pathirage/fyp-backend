@@ -81,4 +81,22 @@ async function getExpenseSectionsByEmail(req, res) {
     }
 }
 
-module.exports = { createExpenseSection, updateExpenseSectionTitleById, deleteExpenseSectionById, getAllExpenseSections, getExpenseSectionsByEmail };
+
+// Get a single expense section by its ID
+async function getSingleSectionById(req, res) {
+    try {
+        const { id } = req.params;
+
+        const expenseSection = await ExpenseSection.findById(id);
+
+        if (!expenseSection) {
+            return res.status(404).json({ message: 'Expense section not found' });
+        }
+
+        res.status(200).json(expenseSection);
+    } catch (error) {
+        res.status(500).json({ message: 'Failed to fetch expense section', error: error.message });
+    }
+}
+
+module.exports = { createExpenseSection, updateExpenseSectionTitleById, deleteExpenseSectionById, getAllExpenseSections, getExpenseSectionsByEmail, getSingleSectionById };

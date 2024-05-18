@@ -6,6 +6,7 @@ const {
   deleteExpenseSectionById,
   getAllExpenseSections,
   getExpenseSectionsByEmail,
+  getSingleSectionById,
 } = require('../controllers/ExpenseSectionsController');
 
 const {
@@ -21,6 +22,7 @@ router.put('/expense-section/update/:id', updateExpenseSectionTitleById);
 router.delete('/expense-section/delete/:id', deleteExpenseSectionById);
 router.get('/expense-section/all', getAllExpenseSections);
 router.get('/expense-section/by-user/:userEmail', getExpenseSectionsByEmail);
+router.get('/expense-section/by-id/:id', getSingleSectionById);
 
 // Expense routes
 router.post('/expense/create/:id', createExpenseBySectionId);
