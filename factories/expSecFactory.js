@@ -1,9 +1,9 @@
 class ExpenseFactory {
-    static createExpense({ expTitle, expValue }) {
+    static createExpense({ expTitle, expValue, paidStatus }) {
       return {
         expTitle,
         expValue,
-        paidStatus: false // Default value for paid
+        paidStatus,
       };
     }
 

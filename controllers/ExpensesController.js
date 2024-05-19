@@ -4,7 +4,7 @@ const ExpenseSection = require('../models/expSecModel');
 async function createExpenseBySectionId(req, res) {
     try {
         const { id } = req.params;
-        const { expTitle, expValue } = req.body;
+        const { expTitle, expValue, paidStatus } = req.body;
 
         const expenseSection = await ExpenseSection.findById(id);
 
@@ -12,7 +12,7 @@ async function createExpenseBySectionId(req, res) {
             return res.status(404).json({ message: 'Expense section not found' });
         }
 
-        const newExpense = ExpenseFactory.createExpense({ expTitle, expValue }); // Corrected method call
+        const newExpense = ExpenseFactory.createExpense({ expTitle, expValue, paidStatus }); // Corrected method call
         expenseSection.expenseList.push(newExpense);
         await expenseSection.save();
 

@@ -4,7 +4,7 @@ const mongoose = require('mongoose');
 const expenseSchema = new mongoose.Schema({
   expTitle: String,
   expValue: Number,
-  paidStatus: { type: Boolean, default: false }
+  paidStatus: Boolean,
 });
 
 // Define schema for expense sections
