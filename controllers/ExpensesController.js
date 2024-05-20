@@ -103,6 +103,9 @@ async function deleteExpenseByExpenseSectionID(req, res) {
             return res.status(404).json({ message: 'Expense not found' });
         }
 
+        // Extract the expense title before removing it
+        const expTitle = expenseSection.expenseList[index].expTitle;
+
         // Remove the expense from the array
         expenseSection.expenseList.splice(index, 1);
 
@@ -118,6 +121,7 @@ async function deleteExpenseByExpenseSectionID(req, res) {
         res.status(500).json({ message: 'Failed to delete expense', error: error.message });
     }
 }
+
 
 // Update paid status of an expense by section ID and expense ID
 async function updatePaidStatusByExpenseSectionID(req, res) {
