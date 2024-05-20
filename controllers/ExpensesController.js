@@ -81,8 +81,7 @@ async function updateExpenseByExpenseSectionID(req, res) {
 
 async function deleteExpenseByExpenseSectionID(req, res) {
     try {
-        const { sectionId, expenseId } = req.params;
-        const { loggedInUserEmail } = req.body;
+        const { sectionId, expenseId, loggedInUserEmail } = req.params;
 
         const expenseSection = await ExpenseSection.findById(sectionId);
 
