@@ -110,8 +110,7 @@ async function addUserToSection(req, res) {
 // Remove a user from a specific expense section by section ID
 async function removeUserFromSection(req, res) {
     try {
-        const { sectionId } = req.params;
-        const { email, loggedInUserEmail } = req.body;
+        const { sectionId, email, loggedInUserEmail } = req.params;
 
         // Find the expense section by ID
         const expenseSection = await ExpenseSection.findById(sectionId);
