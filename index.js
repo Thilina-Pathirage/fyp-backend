@@ -5,6 +5,7 @@ const userRoutes = require('./routes/userRoutes');
 const complaintRoutes = require('./routes/complaintsRoutes');
 const leavesRoutes = require('./routes/leavesRoutes');
 const expRoutes = require('./routes/expRoutes');
+const logRoutes = require('./routes/logRoutes');
 const cors = require("cors");
 
 const app = express();
@@ -39,6 +40,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/complaints', complaintRoutes);
 app.use('/api/leaves', leavesRoutes);
 app.use('/api/exp', expRoutes);
+app.use('/api/exp/logs', logRoutes);
 
 
 // Start the server

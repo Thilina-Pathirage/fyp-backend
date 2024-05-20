@@ -4,13 +4,19 @@ const mongoose = require('mongoose');
 const expenseSchema = new mongoose.Schema({
   expTitle: String,
   expValue: Number,
-  paidStatus: Boolean,
+  paidStatus: { type: Boolean, default: false }
+});
+
+// Define schema for user emails
+const emailSchema = new mongoose.Schema({
+  userEmail: String,
+  userRole: { type: String, default: 'user' } // Add userRole field with default value 'user'
 });
 
 // Define schema for expense sections
 const expenseSectionSchema = new mongoose.Schema({
   secTitle: String,
-  userEmail: String,
+  userEmails: [emailSchema],
   expenseList: [expenseSchema] // Embedding expense schema inside expense section
 });
 

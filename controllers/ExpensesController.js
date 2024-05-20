@@ -1,10 +1,22 @@
 const ExpenseFactory = require('../factories/expSecFactory');
 const ExpenseSection = require('../models/expSecModel');
 
+const ActionLog = require('../models/actionLogModel');
+const ActionLogFactory = require('../factories/actionLogFactory');
+
+async function logAction(sectionId, action, userEmail) {
+    try {
+        const newLog = ActionLogFactory.createActionLog({ sectionId, action, userEmail });
+        await ActionLog.create(newLog);
+    } catch (error) {
+        console.error('Failed to log action:', error.message);
+    }
+}
+
 async function createExpenseBySectionId(req, res) {
     try {
         const { id } = req.params;
-        const { expTitle, expValue, paidStatus } = req.body;
+        const { expTitle, expValue, paidStatus, loggedInUserEmail } = req.body;
 
         const expenseSection = await ExpenseSection.findById(id);
 
@@ -12,25 +24,40 @@ async function createExpenseBySectionId(req, res) {
             return res.status(404).json({ message: 'Expense section not found' });
         }
 
-        const newExpense = ExpenseFactory.createExpense({ expTitle, expValue, paidStatus }); // Corrected method call
+        // Check if the logged-in user is associated with the section
+        const userInExpenseSection = expenseSection.userEmails.find(user => user.userEmail === loggedInUserEmail);
+        if (!userInExpenseSection) {
+            return res.status(403).json({ message: 'Unauthorized' });
+        }
+
+        const newExpense = ExpenseFactory.createExpense({ expTitle, expValue, paidStatus });
         expenseSection.expenseList.push(newExpense);
         await expenseSection.save();
+
+        // Log the action
+        await logAction(id, `createExpense: ${expTitle} (Paid: ${paidStatus})`, loggedInUserEmail);
 
         res.status(201).json({ message: 'Expense created successfully' });
     } catch (error) {
         res.status(500).json({ message: 'Failed to create expense', error: error.message });
     }
 }
-// Update an expense by section ID and expense ID
+
 async function updateExpenseByExpenseSectionID(req, res) {
     try {
         const { sectionId, expenseId } = req.params;
-        const { expTitle, expValue } = req.body;
+        const { expTitle, expValue, loggedInUserEmail } = req.body;
 
         const expenseSection = await ExpenseSection.findById(sectionId);
 
         if (!expenseSection) {
             return res.status(404).json({ message: 'Expense section not found' });
+        }
+
+        // Check if the logged-in user is associated with the section
+        const userInExpenseSection = expenseSection.userEmails.find(user => user.userEmail === loggedInUserEmail);
+        if (!userInExpenseSection) {
+            return res.status(403).json({ message: 'Unauthorized' });
         }
 
         const expense = expenseSection.expenseList.id(expenseId);
@@ -41,8 +68,10 @@ async function updateExpenseByExpenseSectionID(req, res) {
         expense.expTitle = expTitle;
         expense.expValue = expValue;
 
-
         await expenseSection.save();
+
+        // Log the action
+        await logAction(sectionId, `updateExpense: ${expTitle}`, loggedInUserEmail);
 
         res.status(200).json({ message: 'Expense updated successfully' });
     } catch (error) {
@@ -53,11 +82,18 @@ async function updateExpenseByExpenseSectionID(req, res) {
 async function deleteExpenseByExpenseSectionID(req, res) {
     try {
         const { sectionId, expenseId } = req.params;
+        const { loggedInUserEmail } = req.body;
 
         const expenseSection = await ExpenseSection.findById(sectionId);
 
         if (!expenseSection) {
             return res.status(404).json({ message: 'Expense section not found' });
+        }
+
+        // Check if the logged-in user is associated with the section
+        const userInExpenseSection = expenseSection.userEmails.find(user => user.userEmail === loggedInUserEmail);
+        if (!userInExpenseSection) {
+            return res.status(403).json({ message: 'Unauthorized' });
         }
 
         // Find the index of the expense in the expenseList array
@@ -74,7 +110,9 @@ async function deleteExpenseByExpenseSectionID(req, res) {
         // Save the expense section to persist the changes
         await expenseSection.save();
 
-        // Respond with success message
+        // Log the action
+        await logAction(sectionId, `deleteExpense: ${expTitle}`, loggedInUserEmail);
+
         res.status(200).json({ message: 'Expense deleted successfully' });
     } catch (error) {
         // If any error occurs during the process, return 500 error
@@ -82,12 +120,11 @@ async function deleteExpenseByExpenseSectionID(req, res) {
     }
 }
 
-
 // Update paid status of an expense by section ID and expense ID
 async function updatePaidStatusByExpenseSectionID(req, res) {
     try {
         const { sectionId, expenseId } = req.params;
-        const { paidStatus } = req.body;
+        const { paidStatus, loggedInUserEmail } = req.body;
 
         const expenseSection = await ExpenseSection.findById(sectionId);
 
@@ -95,14 +132,23 @@ async function updatePaidStatusByExpenseSectionID(req, res) {
             return res.status(404).json({ message: 'Expense section not found' });
         }
 
+        // Check if the logged-in user is associated with the section
+        const userInExpenseSection = expenseSection.userEmails.find(user => user.userEmail === loggedInUserEmail);
+        if (!userInExpenseSection) {
+            return res.status(403).json({ message: 'Unauthorized' });
+        }
+
         const expense = expenseSection.expenseList.id(expenseId);
         if (!expense) {
             return res.status(404).json({ message: 'Expense not found' });
         }
+        expTitle = expense.expTitle;
 
         expense.paidStatus = paidStatus;
-
         await expenseSection.save();
+
+        // Log the action
+        await logAction(sectionId, `updatePaidStatus:${expTitle} (Paid status to: ${paidStatus})`, loggedInUserEmail);
 
         res.status(200).json({ message: 'Expense updated successfully' });
     } catch (error) {
@@ -110,4 +156,9 @@ async function updatePaidStatusByExpenseSectionID(req, res) {
     }
 }
 
-module.exports = { createExpenseBySectionId, updateExpenseByExpenseSectionID, deleteExpenseByExpenseSectionID, updatePaidStatusByExpenseSectionID };
+module.exports = {
+    createExpenseBySectionId,
+    updateExpenseByExpenseSectionID,
+    deleteExpenseByExpenseSectionID,
+    updatePaidStatusByExpenseSectionID
+};

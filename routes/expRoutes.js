@@ -7,6 +7,9 @@ const {
   getAllExpenseSections,
   getExpenseSectionsByEmail,
   getSingleSectionById,
+  addUserToSection,
+  removeUserFromSection, 
+  getUsersBySectionId
 } = require('../controllers/ExpenseSectionsController');
 
 const {
@@ -23,6 +26,10 @@ router.delete('/expense-section/delete/:id', deleteExpenseSectionById);
 router.get('/expense-section/all', getAllExpenseSections);
 router.get('/expense-section/by-user/:userEmail', getExpenseSectionsByEmail);
 router.get('/expense-section/by-id/:id', getSingleSectionById);
+// Add user to a specific expense section
+router.post('/expense-section/add-user/:sectionId', addUserToSection);
+router.delete('/expense-section/remove-user/:sectionId/', removeUserFromSection);
+router.get('/expense-section/users/:sectionId', getUsersBySectionId);
 
 // Expense routes
 router.post('/expense/create/:id', createExpenseBySectionId);
