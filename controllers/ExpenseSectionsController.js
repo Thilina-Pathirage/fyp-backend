@@ -98,7 +98,7 @@ async function addUserToSection(req, res) {
         await expenseSection.save();
 
         // Log the action
-        await logAction(sectionId, 'addUser', loggedInUserEmail);
+        await logAction(sectionId, `addUser: ${email}`, loggedInUserEmail);
 
         res.status(200).json({ message: 'User added successfully' });
     } catch (error) {
