@@ -150,7 +150,7 @@ async function removeUserFromSection(req, res) {
         await expenseSection.save();
 
         // Log the action
-        await logAction(sectionId, 'removeUser', loggedInUserEmail);
+        await logAction(sectionId, `removeUser: ${email}`, loggedInUserEmail);
 
         res.status(200).json({ message: 'User removed successfully' });
     } catch (error) {
