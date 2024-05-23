@@ -46,7 +46,7 @@ async function registerUser(req, res) {
         userRole: newUser.userRole,
       },
       process.env.SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '7h' }
     );
 
     // Return the token along with user details
@@ -110,7 +110,7 @@ async function loginUser(req, res) {
         userRole: user.userRole,
       },
       process.env.SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '7d' }
     );
 
     // Return the token along with user details
