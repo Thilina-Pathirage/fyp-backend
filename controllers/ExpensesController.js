@@ -13,10 +13,13 @@ async function logAction(sectionId, action, userEmail) {
     }
 }
 
+
 async function createExpenseBySectionId(req, res) {
     try {
         const { id } = req.params;
-        const { expTitle, expValue, paidStatus, loggedInUserEmail } = req.body;
+        const { expTitle, expValue, paidStatus, category, loggedInUserEmail } = req.body;
+
+        console.log('Request Body:', req.body); // Log the request body to debug
 
         const expenseSection = await ExpenseSection.findById(id);
 
@@ -30,7 +33,7 @@ async function createExpenseBySectionId(req, res) {
             return res.status(403).json({ message: 'Unauthorized' });
         }
 
-        const newExpense = ExpenseFactory.createExpense({ expTitle, expValue, paidStatus });
+        const newExpense = ExpenseFactory.createExpense({ expTitle, expValue, paidStatus, category });
         expenseSection.expenseList.push(newExpense);
         await expenseSection.save();
 
@@ -39,14 +42,18 @@ async function createExpenseBySectionId(req, res) {
 
         res.status(201).json({ message: 'Expense created successfully' });
     } catch (error) {
+        console.error('Error creating expense:', error); // Log the error to debug
         res.status(500).json({ message: 'Failed to create expense', error: error.message });
     }
 }
 
+
 async function updateExpenseByExpenseSectionID(req, res) {
     try {
         const { sectionId, expenseId } = req.params;
-        const { expTitle, expValue, loggedInUserEmail } = req.body;
+        const { expTitle, expValue, paidStatus, category, loggedInUserEmail } = req.body;
+
+        console.log('Request Body:', req.body); // Log the request body to debug
 
         const expenseSection = await ExpenseSection.findById(sectionId);
 
@@ -67,6 +74,8 @@ async function updateExpenseByExpenseSectionID(req, res) {
 
         expense.expTitle = expTitle;
         expense.expValue = expValue;
+        expense.paidStatus = paidStatus !== undefined ? paidStatus : expense.paidStatus;
+        expense.category = category !== undefined ? category : expense.category;
 
         await expenseSection.save();
 
@@ -75,9 +84,13 @@ async function updateExpenseByExpenseSectionID(req, res) {
 
         res.status(200).json({ message: 'Expense updated successfully' });
     } catch (error) {
+        console.error('Error updating expense:', error); // Log the error to debug
         res.status(500).json({ message: 'Failed to update expense', error: error.message });
     }
 }
+
+
+
 
 async function deleteExpenseByExpenseSectionID(req, res) {
     try {

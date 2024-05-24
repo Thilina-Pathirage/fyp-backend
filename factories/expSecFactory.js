@@ -1,9 +1,13 @@
 class ExpenseFactory {
-  static createExpense({ expTitle, expValue, paidStatus }) {
+  static createExpense({ expTitle, expValue, paidStatus, category }) {
+    if (!category) {
+      throw new Error('Category is required');
+    }
     return {
       expTitle,
       expValue,
       paidStatus: paidStatus || false,
+      category,
     };
   }
 
