@@ -89,7 +89,6 @@ async function updateExpenseByExpenseSectionID(req, res) {
     }
 }
 
-
 async function getExpenseStatistics(req, res) {
     try {
         const { id } = req.params;  // Expense Section ID
@@ -102,7 +101,7 @@ async function getExpenseStatistics(req, res) {
         // Filter expenses to include only those with paidStatus true
         const paidExpenses = expenseSection.expenseList.filter(expense => expense.paidStatus === true);
 
-        // Calculate total expense values and category-wise percentages
+        // Calculate total expense values and category-wise totals
         const totalExpenses = paidExpenses.reduce((sum, expense) => sum + expense.expValue, 0);
         const categoryTotals = {};
 
@@ -113,16 +112,17 @@ async function getExpenseStatistics(req, res) {
             categoryTotals[expense.category] += expense.expValue;
         });
 
-        const categoryPercentages = Object.keys(categoryTotals).map(category => {
+        const categoryStatistics = Object.keys(categoryTotals).map(category => {
             return {
                 category,
+                totalValue: categoryTotals[category],
                 percentage: ((categoryTotals[category] / totalExpenses) * 100).toFixed(2)
             };
         });
 
         res.status(200).json({
             totalExpenses,
-            categoryPercentages
+            categoryStatistics
         });
     } catch (error) {
         console.error('Error getting expense statistics:', error); // Log the error to debug
