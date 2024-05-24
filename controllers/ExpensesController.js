@@ -90,6 +90,44 @@ async function updateExpenseByExpenseSectionID(req, res) {
 }
 
 
+async function getExpenseStatistics(req, res) {
+    try {
+        const { id } = req.params;  // Expense Section ID
+        const expenseSection = await ExpenseSection.findById(id);
+
+        if (!expenseSection) {
+            return res.status(404).json({ message: 'Expense section not found' });
+        }
+
+        // Calculate total expense values and category-wise percentages
+        const totalExpenses = expenseSection.expenseList.reduce((sum, expense) => sum + expense.expValue, 0);
+        const categoryTotals = {};
+
+        expenseSection.expenseList.forEach(expense => {
+            if (!categoryTotals[expense.category]) {
+                categoryTotals[expense.category] = 0;
+            }
+            categoryTotals[expense.category] += expense.expValue;
+        });
+
+        const categoryPercentages = Object.keys(categoryTotals).map(category => {
+            return {
+                category,
+                percentage: ((categoryTotals[category] / totalExpenses) * 100).toFixed(2)
+            };
+        });
+
+        res.status(200).json({
+            totalExpenses,
+            categoryPercentages
+        });
+    } catch (error) {
+        console.error('Error getting expense statistics:', error); // Log the error to debug
+        res.status(500).json({ message: 'Failed to get expense statistics', error: error.message });
+    }
+}
+
+
 
 
 async function deleteExpenseByExpenseSectionID(req, res) {
@@ -176,5 +214,6 @@ module.exports = {
     createExpenseBySectionId,
     updateExpenseByExpenseSectionID,
     deleteExpenseByExpenseSectionID,
-    updatePaidStatusByExpenseSectionID
+    updatePaidStatusByExpenseSectionID,
+    getExpenseStatistics
 };

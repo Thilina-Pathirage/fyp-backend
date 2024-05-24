@@ -17,6 +17,7 @@ const {
   updateExpenseByExpenseSectionID,
   deleteExpenseByExpenseSectionID,
   updatePaidStatusByExpenseSectionID,
+  getExpenseStatistics
 } = require('../controllers/ExpensesController');
 
 // Expense section routes
@@ -36,5 +37,6 @@ router.post('/expense/create/:id', createExpenseBySectionId);
 router.put('/expense/update/:sectionId/:expenseId', updateExpenseByExpenseSectionID);
 router.delete('/expense/delete/:sectionId/:expenseId/:loggedInUserEmail', deleteExpenseByExpenseSectionID);
 router.put('/expense/update-paid-status/:sectionId/:expenseId', updatePaidStatusByExpenseSectionID);
+router.get('/expense/statistics/:id', getExpenseStatistics);
 
 module.exports = router;
