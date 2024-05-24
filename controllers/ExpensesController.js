@@ -99,11 +99,14 @@ async function getExpenseStatistics(req, res) {
             return res.status(404).json({ message: 'Expense section not found' });
         }
 
+        // Filter expenses to include only those with paidStatus true
+        const paidExpenses = expenseSection.expenseList.filter(expense => expense.paidStatus === true);
+
         // Calculate total expense values and category-wise percentages
-        const totalExpenses = expenseSection.expenseList.reduce((sum, expense) => sum + expense.expValue, 0);
+        const totalExpenses = paidExpenses.reduce((sum, expense) => sum + expense.expValue, 0);
         const categoryTotals = {};
 
-        expenseSection.expenseList.forEach(expense => {
+        paidExpenses.forEach(expense => {
             if (!categoryTotals[expense.category]) {
                 categoryTotals[expense.category] = 0;
             }
